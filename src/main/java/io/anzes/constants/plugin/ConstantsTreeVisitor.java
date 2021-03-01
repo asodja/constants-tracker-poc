@@ -3,34 +3,35 @@ package io.anzes.constants.plugin;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.lang.model.element.Element;
+import javax.lang.model.element.VariableElement;
+
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MemberSelectTree;
-import com.sun.source.util.TreeScanner;
-import com.sun.tools.javac.code.Symbol.VarSymbol;
-import com.sun.tools.javac.tree.JCTree.JCFieldAccess;
-import com.sun.tools.javac.tree.JCTree.JCIdent;
+import com.sun.source.util.TreePathScanner;
+import com.sun.source.util.Trees;
 
-public class ConstantsTreeVisitor extends TreeScanner<Void, Void> {
+public class ConstantsTreeVisitor extends TreePathScanner<Trees, Trees> {
 
-    // This is here just for POC...
+    // This is here just for POC so it's simple to test...
     public static final Set<String> CONSTANT_CLASSES = new HashSet<>();
-
+    
     @Override
-    public Void visitMemberSelect(MemberSelectTree node, Void p) {
-        JCFieldAccess jcTree = (JCFieldAccess) node;
-        if (jcTree.sym instanceof VarSymbol && ((VarSymbol) jcTree.sym).getConstValue() != null) {
-            CONSTANT_CLASSES.add(jcTree.sym.owner.toString());
+    public Trees visitMemberSelect(MemberSelectTree node, Trees trees) {
+        Element element = trees.getElement(getCurrentPath());
+        if (element instanceof VariableElement && ((VariableElement) element).getConstantValue() != null) {
+            CONSTANT_CLASSES.add(element.getEnclosingElement().toString());
         }
-        return super.visitMemberSelect(node, p);
+        return super.visitMemberSelect(node, trees);
     }
 
     @Override
-    public Void visitIdentifier(IdentifierTree node, Void p) {
-        JCIdent jcTree = (JCIdent) node;
-        if (jcTree.type != null && jcTree.type.constValue() != null) {
-            CONSTANT_CLASSES.add(jcTree.sym.owner.toString());
+    public Trees visitIdentifier(IdentifierTree node, Trees trees) {
+        Element element = trees.getElement(getCurrentPath());
+        if (element instanceof VariableElement && ((VariableElement) element).getConstantValue() != null) {
+            CONSTANT_CLASSES.add(element.getEnclosingElement().toString());
         }
-        return super.visitIdentifier(node, null);
+        return super.visitIdentifier(node, trees);
     }
 
 }

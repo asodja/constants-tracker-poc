@@ -23,8 +23,8 @@ public class TestClass<@Annotation(AnnConstantOnClassTypeParam.ANN_ON_CLASS_TYPE
     }
 
     @Annotation(AnnConstantOnMethod.ANN_ON_METHOD + 5)
-    <@Annotation(AnnConstantOnMethodTypeParam.x) T> T methodBody(
-            @Annotation(AnnConstantOnMethodArgument.x) String argument) {
+    <@Annotation(AnnConstantOnMethodTypeParam.ANN_CONSTANT_ON_METHOD_TYPE_PARAM) T> T methodBody(
+            @Annotation(AnnConstantOnMethodArgument.ANN_CONSTANT_ON_METHOD_ARGUMENT) String argument) {
         return null;
     }
 

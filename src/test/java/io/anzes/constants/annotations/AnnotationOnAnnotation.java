@@ -15,9 +15,9 @@ import java.lang.annotation.Target;
         ElementType.PACKAGE,
         ElementType.TYPE_PARAMETER,
         ElementType.TYPE_USE })
-@Retention(RetentionPolicy.CLASS)
-public @interface Annotation {
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AnnotationOnAnnotation {
 
-    int value();
+    String value();
 
 }
