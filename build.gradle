@@ -11,10 +11,18 @@ repositories {
 }
 
 dependencies {
-    implementation files(org.gradle.internal.jvm.Jvm.current().toolsJar)
+    implementation files("$projectDir/lib/tools.jar")
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testImplementation 'org.assertj:assertj-core:3.19.0'
     testImplementation 'org.jooq:joor-java-8:0.9.13'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+        vendor = JvmVendorSpec.ADOPTOPENJDK
+    }
 }
 
 test {

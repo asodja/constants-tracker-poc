@@ -1,5 +1,5 @@
 package io.anzes.constants.constants;
 
 public class AnnConstantOnMethod {
-    public static final int x = 1;
+    public static final int ANN_ON_METHOD = 1;
 }

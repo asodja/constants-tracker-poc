@@ -1,68 +1,88 @@
 package io.anzes.constants
 
-import org.joor.CompileOptions
-import org.joor.Reflect
+import io.anzes.constants.plugin.ConstantsTreeVisitor.CONSTANT_CLASSES
+import io.anzes.constants.testing.utils.TestCompiler
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.io.File
+
 
 class ConstantsProcessorTest {
 
-    var clazz = """
-        package io.anzes.constants;
-        import io.anzes.constants.annotations.*;
-        import io.anzes.constants.constants.*;
-        import java.util.Map;
-        
-        import static io.anzes.constants.constants.StaticAnnConstantOnMethod.x;
-        import static io.anzes.constants.constants.StaticFinalFieldDeclarationConstant.staticFinal;
-        import static io.anzes.constants.constants.FieldDeclarationConstant.x2;
+    private val compiler = TestCompiler()
 
-        @Annotation(AnnConstantOnClass.x)
-        public class TestClass<@Annotation(AnnConstantOnClassTypeParam.x) T> {
-        
-            @Annotation(AnnConstantOnField.x + 1)
-            private Map<@Annotation(AnnConstantOnFieldTypeParam.x) String, String> field;
-            
-            public static final int staticFinalField = staticFinal + 1;
-            
-            public final int finalField = FinalFieldDeclarationConstant.x + 1;
-            
-            private int fieldField = 1 + x2;
-        
-            @Annotation(AnnConstantOnMethod.x + 5)
-            <@Annotation(AnnConstantOnMethodTypeParam.x) T> T methodBody(@Annotation(AnnConstantOnMethodArgument.x) String argument) {
-                return null;
-            }
-            
-            @Annotation(x)
-            void methodBody2() {
-            }
-            
-        }
-""".trimIndent()
-//
-//    var clazz2 = """
-//        package io.anzes.constants;
-//        import static io.anzes.constants.constants.StaticFinalFieldDeclarationConstant.staticFinal;
-//
-//        public class TestClass2 {
-//
-//            private static final int staticFinalField = staticFinal + 1;
-//
-//        }
-//""".trimIndent()
+    @BeforeEach
+    fun setUp() {
+        CONSTANT_CLASSES.clear()
+    }
 
     @Test
-    fun shouldPrintAllConstantsFromClass() {
-        val processor = ConstantsProcessor()
-        try {
-            Reflect.compile(
-                "io.anzes.constants.TestClass",
-                clazz,
-                CompileOptions().processors(processor)
-            ).create()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    fun shouldFindAllConstantsFromClass() {
+        // Given
+        val clazz = File("${File("").absolutePath}/src/test/java/io/anzes/constants/testclass/TestClass.java").readText()
+
+        // When
+        compiler.compile("io.anzes.constants.testclass.TestClass", clazz)
+
+        // Then
+        println("Found next constants classes:\n\t${CONSTANT_CLASSES.joinToString(separator = "\n\t")}")
+        assertThat(CONSTANT_CLASSES).containsExactlyInAnyOrderElementsOf(setOf(
+            "io.anzes.constants.constants.AnnConstantOnConstructorArgument",
+            "io.anzes.constants.constants.AnnConstantOnConstructor",
+            "io.anzes.constants.constants.SwitchCaseConstant",
+            "io.anzes.constants.constants.AnnConstantOnClass",
+            "io.anzes.constants.constants.AnnConstantOnClassTypeParam",
+            "io.anzes.constants.constants.AnnConstantOnMethodArgument",
+            "io.anzes.constants.constants.AnnConstantOnFieldTypeParam",
+            "io.anzes.constants.constants.IfConditionConstant",
+            "io.anzes.constants.constants.AnnConstantOnField",
+            "io.anzes.constants.constants.ConstructorFieldConstant",
+            "io.anzes.constants.constants.StaticFinalFieldDeclarationConstant",
+            "io.anzes.constants.constants.FinalFieldDeclarationConstant",
+            "io.anzes.constants.constants.FieldDeclarationConstant",
+            "io.anzes.constants.constants.AnnOnLocalFieldConstant",
+            "io.anzes.constants.constants.AnnConstantOnMethod",
+            "io.anzes.constants.constants.AnnConstantOnMethodTypeParam",
+            "io.anzes.constants.constants.ForLoopInitConstant",
+            "io.anzes.constants.constants.ForLoopConditionConstant",
+            "io.anzes.constants.constants.ForLoopAssignOpConstant",
+            "io.anzes.constants.constants.LambdaConstant",
+        ))
+    }
+
+    @Test
+    fun shouldFindAllStaticConstantsFromClass() {
+        // Given
+        val clazz = File("${File("").absolutePath}/src/test/java/io/anzes/constants/testclass/StaticImportTestClass.java").readText()
+
+        // When
+        compiler.compile("io.anzes.constants.testclass.StaticImportTestClass", clazz)
+
+        // Then
+        println("Found next constants classes:\n\t${CONSTANT_CLASSES.joinToString(separator = "\n\t")}")
+        assertThat(CONSTANT_CLASSES).containsExactlyInAnyOrderElementsOf(setOf(
+            "io.anzes.constants.constants.AnnConstantOnConstructorArgument",
+            "io.anzes.constants.constants.AnnConstantOnConstructor",
+            "io.anzes.constants.constants.SwitchCaseConstant",
+            "io.anzes.constants.constants.AnnConstantOnClass",
+            "io.anzes.constants.constants.ConstructorFieldConstant",
+            "io.anzes.constants.constants.AnnConstantOnClassTypeParam",
+            "io.anzes.constants.constants.AnnConstantOnMethodArgument",
+            "io.anzes.constants.constants.AnnConstantOnFieldTypeParam",
+            "io.anzes.constants.constants.IfConditionConstant",
+            "io.anzes.constants.constants.AnnConstantOnField",
+            "io.anzes.constants.constants.StaticFinalFieldDeclarationConstant",
+            "io.anzes.constants.constants.FinalFieldDeclarationConstant",
+            "io.anzes.constants.constants.FieldDeclarationConstant",
+            "io.anzes.constants.constants.AnnOnLocalFieldConstant",
+            "io.anzes.constants.constants.AnnConstantOnMethod",
+            "io.anzes.constants.constants.AnnConstantOnMethodTypeParam",
+            "io.anzes.constants.constants.ForLoopInitConstant",
+            "io.anzes.constants.constants.ForLoopConditionConstant",
+            "io.anzes.constants.constants.ForLoopAssignOpConstant",
+            "io.anzes.constants.constants.LambdaConstant",
+        ))
     }
 
 
