@@ -18,7 +18,7 @@ class ConstantsProcessorTest {
     }
 
     @Test
-    fun shouldFindAllConstantsFromClass() {
+    fun `should find all constants from class`() {
         // Given
         val clazz = File("${File("").absolutePath}/src/test/java/io/anzes/constants/testclass/TestClass.java").readText()
 
@@ -26,7 +26,6 @@ class ConstantsProcessorTest {
         compiler.compile("io.anzes.constants.testclass.TestClass", clazz)
 
         // Then
-        println("Found next constants classes:\n\t${CONSTANT_CLASSES.joinToString(separator = "\n\t")}")
         assertThat(CONSTANT_CLASSES).containsExactlyInAnyOrderElementsOf(setOf(
             "io.anzes.constants.constants.AnnConstantOnConstructorArgument",
             "io.anzes.constants.constants.AnnConstantOnConstructor",
@@ -52,7 +51,7 @@ class ConstantsProcessorTest {
     }
 
     @Test
-    fun shouldFindAllStaticConstantsFromClass() {
+    fun `should find all static constants from class`() {
         // Given
         val clazz = File("${File("").absolutePath}/src/test/java/io/anzes/constants/testclass/StaticImportTestClass.java").readText()
 
@@ -60,7 +59,6 @@ class ConstantsProcessorTest {
         compiler.compile("io.anzes.constants.testclass.StaticImportTestClass", clazz)
 
         // Then
-        println("Found next constants classes:\n\t${CONSTANT_CLASSES.joinToString(separator = "\n\t")}")
         assertThat(CONSTANT_CLASSES).containsExactlyInAnyOrderElementsOf(setOf(
             "io.anzes.constants.constants.AnnConstantOnConstructorArgument",
             "io.anzes.constants.constants.AnnConstantOnConstructor",
@@ -86,7 +84,7 @@ class ConstantsProcessorTest {
     }
 
     @Test
-    fun shouldFindAllConstantsFromAnnotationClass() {
+    fun `should find all constants from annotation class`() {
         // Given
         val clazz =
             File("${File("").absolutePath}/src/test/java/io/anzes/constants/testclass/TestAnnotation.java").readText()
@@ -95,7 +93,6 @@ class ConstantsProcessorTest {
         compiler.compile("io.anzes.constants.testclass.TestAnnotation", clazz)
 
         // Then
-        println("Found next constants classes:\n\t${CONSTANT_CLASSES.joinToString(separator = "\n\t")}")
         assertThat(CONSTANT_CLASSES).containsExactlyInAnyOrderElementsOf(
             setOf(
                 "io.anzes.constants.constants.AnnotationDefaultArrayValueConstant",
@@ -107,7 +104,7 @@ class ConstantsProcessorTest {
     }
 
     @Test
-    fun shouldNotFindNonPrimitiveConstantsFromClass() {
+    fun `should not find non primitive constants from class`() {
         // Given
         val clazz =
             File("${File("").absolutePath}/src/test/java/io/anzes/constants/testclass/NonPrimitiveTestClass.java").readText()
@@ -116,12 +113,11 @@ class ConstantsProcessorTest {
         compiler.compile("io.anzes.constants.testclass.NonPrimitiveTestClass", clazz)
 
         // Then
-        println("Found next constants classes:\n\t${CONSTANT_CLASSES.joinToString(separator = "\n\t")}")
         assertThat(CONSTANT_CLASSES).isEmpty()
     }
 
     @Test
-    fun shouldNotReturnReferenceClassForStaticVariableThatIsNotAConstantsFromClass() {
+    fun `should not return reference class for static variable that is not aConstants from class`() {
         // Given
         val clazz =
             File("${File("").absolutePath}/src/test/java/io/anzes/constants/testclass/NotAConstantTestClass.java").readText()
@@ -130,12 +126,11 @@ class ConstantsProcessorTest {
         compiler.compile("io.anzes.constants.testclass.NotAConstantTestClass", clazz)
 
         // Then
-        println("Found next constants classes:\n\t${CONSTANT_CLASSES.joinToString(separator = "\n\t")}")
         assertThat(CONSTANT_CLASSES).isEmpty()
     }
 
     @Test
-    fun shouldFindSelfAsConstantClass() {
+    fun `should find self as constant class`() {
         // Given
         val clazz =
             File("${File("").absolutePath}/src/test/java/io/anzes/constants/testclass/ReferenceToSelf.java").readText()
@@ -144,7 +139,6 @@ class ConstantsProcessorTest {
         compiler.compile("io.anzes.constants.testclass.ReferenceToSelf", clazz)
 
         // Then
-        println("Found next constants classes:\n\t${CONSTANT_CLASSES.joinToString(separator = "\n\t")}")
         assertThat(CONSTANT_CLASSES).containsExactly("io.anzes.constants.testclass.ReferenceToSelf")
     }
 
